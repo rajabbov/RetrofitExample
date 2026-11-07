@@ -1,0 +1,30 @@
+package com.example.retrofitexample
+
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import com.example.retrofitexample.user.User
+
+private const val STARTING_PAGE = 0
+
+class UserPagingSource(val apiInterface: ApiInterface) : PagingSource<Int, User>() {
+    override fun getRefreshKey(state: PagingState<Int, User>): Int? {
+        return null
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, User> {
+        val startKey = params.key ?: STARTING_PAGE
+        return try {
+
+            val response = apiInterface.getAllUserByPage(startKey)
+            val userList = response.body()?.userList
+            LoadResult.Page(
+                userList ?: emptyList(),
+                prevKey = if (startKey == STARTING_PAGE) null else startKey - 1,
+                nextKey = if (userList == null || userList.isEmpty()) null else +1
+            )
+
+        }catch (e:Exception){
+            LoadResult.Error(e)
+        }
+    }
+}
