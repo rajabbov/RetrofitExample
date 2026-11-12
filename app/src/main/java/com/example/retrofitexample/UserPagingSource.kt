@@ -20,7 +20,7 @@ class UserPagingSource(val apiInterface: ApiInterface) : PagingSource<Int, User>
             LoadResult.Page(
                 userList ?: emptyList(),
                 prevKey = if (startKey == STARTING_PAGE) null else startKey - 1,
-                nextKey = if (userList == null || userList.isEmpty()) null else +1
+                nextKey = if (userList == null || userList.isEmpty()) null else startKey + 1
             )
 
         }catch (e:Exception){
